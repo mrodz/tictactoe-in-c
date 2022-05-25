@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "tictactoe.h": "c",
+        "string.h": "c",
+        "stdio.h": "c",
+        "stdlib.h": "c",
+        "stddef.h": "c",
+        "cstdio": "c",
+        "stdarg.h": "c",
+        "stdint.h": "c"
+    }
+}
