@@ -132,8 +132,9 @@ int read_player_input0(struct Grid * g, int destination[2]) {
 
 #ifdef __STDC_LIB_EXT1__
     scanf_s("%s", x);
-#endif
+#else
     scanf("%s", x);
+#endif
 
     if (!is_numeric(x)) {
         return 4;
@@ -150,8 +151,9 @@ int read_player_input0(struct Grid * g, int destination[2]) {
 
 #ifdef __STDC_LIB_EXT1__
     scanf_s("%s", y);
-#endif
+#else
     scanf("%s", y);
+#endif
 
     if (!is_numeric(y)) {
         return 4;
