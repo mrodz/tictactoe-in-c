@@ -4,7 +4,7 @@
  * @brief Unit Testing for the `get_winner(Grid *)` function
  */
 void test_winner_function(void) {
-    __unit_testing = true;
+    unit_testing = true;
 
     struct TestPair {
         struct Grid grid;
@@ -44,5 +44,5 @@ void test_winner_function(void) {
     }
 
     printf("\n$ RESULTS:\n\t- %ix Passes\n\t- %ix Fails\n", passes, fails);
-    __unit_testing = false;
+    unit_testing = false;
 }

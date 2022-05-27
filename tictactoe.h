@@ -76,7 +76,7 @@
         char content[3][3];
     };
 
-    static bool __unit_testing = false;
-    static unsigned short __turn_count = 0;
+    static bool unit_testing = false;
+    static unsigned short turn_count = 0;
     static struct Grid grid;
 #endif

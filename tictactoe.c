@@ -102,7 +102,7 @@ void print_grid(struct Grid * g) {
 }
 
 char get_current_player(void) {
-    return __turn_count % 2 == 0 ? PLAYER_X : PLAYER_O;
+    return turn_count % 2 == 0 ? PLAYER_X : PLAYER_O;
 }
 
 /**
@@ -230,7 +230,7 @@ struct Win get_winner(struct Grid * g) {
     }
 
     // Is the Game still active?
-    if (__unit_testing) {
+    if (unit_testing) {
         for (int i = 0; i < 3; i++) {
            for (int j = 0; j < 3; j++) {
                 if (tg[i][j] == BLANK_SPACE) {
@@ -238,7 +238,7 @@ struct Win get_winner(struct Grid * g) {
                 }
             }
         }
-    } else if (__turn_count < 9) {
+    } else if (turn_count < 9) {
         return (struct Win) { .symbol = '\0', .code = STILL_PLAYING };
     }
 
@@ -260,7 +260,7 @@ void tictactoe(struct Grid * g) {
         set_grid_at(g, destination[0], destination[1], get_current_player());
         print_grid(g);
 
-        __turn_count++;
+        turn_count++;
         
         winner = get_winner(g);
         if (winner.code != STILL_PLAYING) {
