@@ -1,4 +1,4 @@
-#define __STDC_WANT_LIB_EXT1__ 1
+#define __STDC_WANT_LIB_EXT1__ 1 // lets us use scanf_s()
 
 #include <stdio.h>
 #include <string.h>
@@ -27,10 +27,10 @@ int main(int argc, const char * argv[]) {
 struct Grid grid_from_string(const char * string, int * return_code) {
     if (strlen(string) != 9) {
         *return_code = 1;
-        return (struct Grid) { .content = {{BLANK_SPACE, BLANK_SPACE, BLANK_SPACE}, {BLANK_SPACE, BLANK_SPACE, BLANK_SPACE}, {BLANK_SPACE, BLANK_SPACE, BLANK_SPACE}} };
+        return (struct Grid) EMPTY_GRID;
     }
 
-    static struct Grid result;
+    struct Grid result;
 
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
@@ -101,7 +101,7 @@ void print_grid(struct Grid * g) {
     printf("%s\n", LINE_SEP);
 }
 
-char get_current_player() {
+char get_current_player(void) {
     return __turn_count % 2 == 0 ? PLAYER_X : PLAYER_O;
 }
 
@@ -197,7 +197,7 @@ bool strict_win_equality(struct Win * win1, struct Win * win2) {
  * @brief Visualize a Win struct in the format "{1} won with code {2}"
  */
 char * win_to_string(struct Win * win) {
-    static char result[127];
+    char result[127];
     snprintf(result, 127, "%c won with code %d", win->symbol, win->code);
     return result;
 }

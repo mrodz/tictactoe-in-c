@@ -3,7 +3,7 @@
 /**
  * @brief Unit Testing for the `get_winner(Grid *)` function
  */
-void test_winner_function() {
+void test_winner_function(void) {
     __unit_testing = true;
 
     struct TestPair {

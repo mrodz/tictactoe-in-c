@@ -57,7 +57,7 @@
     bool is_player(char symbol);
     int set_grid_at(struct Grid * g, int x, int y, char symbol);
     void print_grid(struct Grid * g);
-    char get_current_player();
+    char get_current_player(void);
     int read_player_input0(struct Grid * g, int destination[2]);
     void read_player_input(struct Grid * g, int destination[2]);
     bool winner_equality(struct Win * win1, struct Win * win2);
@@ -65,8 +65,7 @@
     char * win_to_string(struct Win * win);
     struct Win get_winner(struct Grid * g);
     void tictactoe(struct Grid * g);
-    void test_winner_function();
-
+    void test_winner_function(void);
     
     struct Win {
         char symbol;
