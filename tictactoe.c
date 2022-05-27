@@ -1,9 +1,10 @@
-#define __STDC_WANT_LIB_EXT1__ 1 // lets us use scanf_s()
-
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
+
 #include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <signal.h>
 
 #include <C:\Users\mateo\Documents\Coding Projects\Languages\C\tictactoe\tictactoe.h>
 #include <C:\Users\mateo\Documents\Coding Projects\Languages\C\tictactoe\tictactoe.test.c>
@@ -12,7 +13,7 @@
  * @brief Entrypoint to the program
  */
 int main(int argc, const char * argv[]) {
-    test_winner_function();
+    // test_winner_function();
     tictactoe(&grid);
     return 0;
 }
@@ -105,6 +106,15 @@ char get_current_player(void) {
     return turn_count % 2 == 0 ? PLAYER_X : PLAYER_O;
 }
 
+bool is_numeric(char * string) {
+    for (int i = 0, len = strlen(string); i < len; i++) {
+        if (!fits_range(48, 57, string[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
 /**
  * @brief Use scanf to read user input
  * 
@@ -112,34 +122,59 @@ char get_current_player(void) {
  * @return int code whether or not the operation was successful (0), 
  * or ran into a problem: out of bounds reading column (1), 
  * out of bounds reading row (2),
- * selection is already full (3)
- * @todo CURRENTLY BREAKS ON NON-NUMERIC INPUT!!! Make sure to fix it. (think sscanf_s + aoti)
+ * selection is already full (3),
+ * NaN (4)
  */
 int read_player_input0(struct Grid * g, int destination[2]) {
-    int x, y;
+    char *x = (char*) malloc(127);
+    char *y = (char*) malloc(127);
     printf("\tEnter ROW number (1-3): ");
-    scanf("%d", &x);
-    
-    if (!fits_range(1, 3, x)) {
+
+#ifdef __STDC_LIB_EXT1__
+    scanf_s("%s", x);
+#endif
+    scanf("%s", x);
+
+    if (!is_numeric(x)) {
+        return 4;
+    }
+
+    int x_int = atoi(x);
+    free(x);
+
+    if (!fits_range(1, 3, x_int)) {
         return 1;
     }
 
     printf("\tEnter COLUMN number (1-3): ");
-    scanf("%d", &y);
 
-    if (!fits_range(1, 3, y)) {
+#ifdef __STDC_LIB_EXT1__
+    scanf_s("%s", y);
+#endif
+    scanf("%s", y);
+
+    if (!is_numeric(y)) {
+        return 4;
+    }
+
+    int y_int = atoi(y);
+    free(y);
+
+    if (!fits_range(1, 3, y_int)) {
         return 2;
     }
 
-    if (g->content[x - 1][y - 1] != BLANK_SPACE) {
+    if (g->content[x_int - 1][y_int - 1] != BLANK_SPACE) {
         return 3;
     }
 
-    destination[0] = x;
-    destination[1] = y;
+    destination[0] = x_int;
+    destination[1] = y_int;
 
     return 0;
 }
+
+void crash_handler(int);
 
 /**
  * @brief Get the player input
@@ -152,8 +187,14 @@ void read_player_input(struct Grid * g, int destination[2]) {
 
     int x, y;
     while (true) {
+        signal(SIGINT, crash_handler); // ?
+
         int code = read_player_input0(g, result);
         switch (code) {
+            case 0:
+                x = result[0];
+                y = result[1];
+                goto exit_getting_input;
             case 1:
                 printf("\n\nThat row does not fit into the range 1-3!\n\n\nPlease try again...\n");
                 continue;
@@ -163,10 +204,12 @@ void read_player_input(struct Grid * g, int destination[2]) {
             case 3:
                 printf("\n\nThat slot is already full!\n\n\nPlease try again...\n");
                 continue;
+            case 4:
+                printf("\n\nThat input wasn't numeric! Please use integers in the range 1-3.\n\n\nPlease try again...\n");
+                continue;
             default:
-                x = result[0];
-                y = result[1];
-                goto exit_getting_input;
+                printf("\n\n**FATAL ERROR** - Unknown Code: %d\n\n", code);
+                continue;
         }
     }
 
@@ -177,6 +220,13 @@ void read_player_input(struct Grid * g, int destination[2]) {
     // to convert the values from human-accesible to array indexes. 
     destination[0] = x - 1;
     destination[1] = y - 1;
+}
+
+void crash_handler(int sig) {
+    char c;
+    signal(sig, SIG_IGN);
+    printf("\n\n** DETECTED A FORCED EXIT (ctrl+C) **\n\n");
+    exit(0);
 }
 
 /**
@@ -196,10 +246,8 @@ bool strict_win_equality(struct Win * win1, struct Win * win2) {
 /**
  * @brief Visualize a Win struct in the format "{1} won with code {2}"
  */
-char * win_to_string(struct Win * win) {
-    char result[127];
-    snprintf(result, 127, "%c won with code %d", win->symbol, win->code);
-    return result;
+void win_to_string(struct Win * win, char * result, int max_buf_len) {
+    snprintf(result, max_buf_len, "%c won with code %d", win->symbol, win->code);
 }
 
 struct Win get_winner(struct Grid * g) {

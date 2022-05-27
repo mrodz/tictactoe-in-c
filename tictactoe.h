@@ -62,7 +62,7 @@
     void read_player_input(struct Grid * g, int destination[2]);
     bool winner_equality(struct Win * win1, struct Win * win2);
     bool strict_win_equality(struct Win * win1, struct Win * win2);
-    char * win_to_string(struct Win * win);
+    void win_to_string(struct Win * win, char * result, int max_buf_len);
     struct Win get_winner(struct Grid * g);
     void tictactoe(struct Grid * g);
     void test_winner_function(void);
